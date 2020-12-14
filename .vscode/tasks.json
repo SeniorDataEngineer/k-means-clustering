@@ -1,0 +1,28 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "build",
+        "dependsOn": [
+          "pipInstall"
+        ]
+      },
+      {
+        "label": "pipInstall",
+        "type": "shell",
+        "osx": {
+          "command": "${config:python.pythonPath}/bin/python -m pip install -r requirements.txt"
+        },
+        "windows": {
+          "command": "${config:python.pythonPath} -m pip install -r requirements.txt"
+        },
+        "linux": {
+          "command": "${config:python.pythonPath}/bin/python -m pip install -r requirements.txt"
+        },
+        "problemMatcher": [],
+        "options": {
+          "cwd": "${workspaceFolder}/src"
+        }
+      }
+    ]
+  }
