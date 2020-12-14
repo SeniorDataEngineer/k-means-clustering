@@ -125,9 +125,9 @@ class KMeans():
 
         iteration = 0
         while True:
-            
 
-            if iteration = max_iterations:
+
+            if iteration == max_iterations:
                 break
         
 
