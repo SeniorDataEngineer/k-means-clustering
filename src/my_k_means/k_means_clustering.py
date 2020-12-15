@@ -6,7 +6,6 @@ from collections import namedtuple
 import random
 
 # Third party imports.
-import numpy
 from sklearn.metrics import pairwise_distances_argmin
 
 
@@ -57,6 +56,37 @@ class KMeans():
             for dim in range(len(p))
         ]) ** 0.5
 
+    def pair_closest_points(
+            self,
+            points: [dict],
+            centers: [dict],
+            center_label: str) -> [dict]:
+        """
+        Given a series of points update the label to the
+        center point that is closest to the point. Iterate
+        through each point and compare to all centers, if
+        the center is nearer than all previous centers store
+        the center number in the point dict. \n
+        Returns:
+            [dict]
+        Doctest:
+            >>> km = KMeans()
+            >>> p = [{'x': 2, 'y': 2, 'c': None}, {'x': 6, 'y': 6, 'c': None}]
+            >>> c = [{'x': 1, 'y': 1, 'c': 1}, {'x': 7, 'y': 7, 'c': 2}]
+            >>> r = [{'x': 2, 'y': 2, 'c': 1}, {'x': 6, 'y': 6, 'c': 2}]
+            >>> assert km.pair_closest_points(p, c, 'c') == r
+        """
+        pos_inf = float('inf')
+        for point in points:
+            shortest_distance = pos_inf
+            for center in centers:
+                p, q = (point['x'], point['y']), (center['x'], center['y'])
+                distance = self.get_euclidean_distance(p, q)
+                if distance < shortest_distance:
+                    shortest_distance = distance
+                    point[center_label] = center[center_label]
+        return points
+
     def get_items_randomly(
             self,
             len_: int,
@@ -93,25 +123,6 @@ class KMeans():
             random_positions.append(rnd)
         return random_positions
 
-    def k_means_2d(
-            k: int,
-            points: [namedtuple],
-            random_seed: int=2) -> [namedtuple]:
-        """
-        Clusters 2-dimensional array of points into groups and
-        returns the points with their cluster assignment. \n
-        Returns:
-            [namedtuple]
-        Doctest:
-            Test this with pytest, the testcase is too complex
-            to represent in doctest.
-        """
-        range_ = numpy.random.RandomState(random_seed)
-        i = range_.permutation(points[0])
-        centers = points[i]
-        while True:
-            labels = pairwise_distances_min(points)
-
     def x_k_means_2d(
             self,
             k: int,
@@ -125,7 +136,7 @@ class KMeans():
 
         iteration = 0
         while True:
-
+            labels = 1 #self.get_euclidean_distance()
 
             if iteration == max_iterations:
                 break
@@ -139,6 +150,12 @@ if __name__ == "__main__":
     import doctest
     doctest.testmod()
 
-
+    """
     km = KMeans()
     km.x_k_means_2d(2, [(1,2),(3,3),(4,4),(4,1),(6,5)])
+
+    p = [{'x': 2, 'y': 2, 'c': None}, {'x': 6, 'y': 6, 'c': None}]
+    c = [{'x': 1, 'y': 1, 'c': 1}, {'x': 7, 'y': 7, 'c': 2}]
+    r = [{'x': 2, 'y': 2, 'c': 1}, {'x': 6, 'y': 6, 'c': 2}]
+    assert pair_closest_points(p, c, 'c') == r
+    """
