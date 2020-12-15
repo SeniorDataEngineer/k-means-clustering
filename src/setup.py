@@ -24,7 +24,7 @@ setup(
 
         'Topic :: Software Development :: Libraries',
 
-        'Programming Language :: Python - Anaconda :: 3.9'
+        'Programming Language :: Python - Anaconda :: 3.9.1'
     ],
 
     packages=find_packages(),
