@@ -73,8 +73,8 @@ class KMeans():
             >>> km = KMeans()
             >>> p = [{'x': 2, 'y': 2, 'c': None}, {'x': 6, 'y': 6, 'c': None}]
             >>> c = [{'x': 1, 'y': 1, 'c': 1}, {'x': 7, 'y': 7, 'c': 2}]
-            >>> r = [{'x': 2, 'y': 2, 'c': 1}, {'x': 6, 'y': 6, 'c': 2}]
-            >>> assert km.pair_closest_points(p, c, 'c') == r
+            >>> e = [{'x': 2, 'y': 2, 'c': 1}, {'x': 6, 'y': 6, 'c': 2}]
+            >>> assert km.pair_closest_points(p, c, 'c') == e
         """
         pos_inf = float('inf')
         for point in points:
@@ -108,8 +108,7 @@ class KMeans():
         if len_ == k_items:
             return [
                 v
-                for v in range(0, len(len_))
-            ]
+                for v in range(0, len(len_))]
 
         random_positions = []
         for _ in range(0, k_items):
@@ -123,39 +122,81 @@ class KMeans():
             random_positions.append(rnd)
         return random_positions
 
-    def x_k_means_2d(
+    def get_nd_series_mean(
+            self,
+            series: [dict],
+            keys: [str]) -> dict:
+        """
+        Given a n-dimensional series of dicts return
+        the mean for each dimension. \n
+        Returns:
+            dict
+        Doctest:
+            >>> km = KMeans()
+            >>> s = [{'x':2, 'y':3}, {'x':5, 'y':6}, {'x':9, 'y':10}]
+            >>> e = {'x':5.333333333333333, 'y':6.333333333333333}
+            >>> assert km.get_nd_series_mean(series=s, keys=['x', 'y']) == e
+        """
+        mean = {}
+        for key in keys:
+            mean[key] = 0
+            for item in series:
+                mean[key] += item[key]
+            mean[key] /= len(series)
+        return mean
+
+    def k_means_2d(
             self,
             k: int,
-            points: [namedtuple],
+            points: [dict],
+            label_key: str,
+            keys: [str],
             random_seed: int=2,
-            max_iterations: int=100) -> [namedtuple]:
-        
-        centroids = self.get_items_randomly(
-            len_=len(points),
-            k_items=k)
+            max_iterations: int=100) -> [dict]:
+        """
+        Given a series of points return k clusters of grouped
+        points. This is a standard implementation of k means. \n
+        Returns:
+            [dict]
+        """
+        # Pick k centroids randomly.
+        centroids = [ 
+            points[i] 
+            for i in self.get_items_randomly(len(points),k)]
 
         iteration = 0
         while True:
-            labels = 1 #self.get_euclidean_distance()
-
             if iteration == max_iterations:
                 break
-        
+            iteration += 1
 
-        print(centroids)
+            # Get the closest centroid for each point.
+            points = self.pair_closest_points(
+                points=points,
+                centers=centroids,
+                center_label='c')
+            print(points)
 
+            # Replace centroid with cluster mean.
+            new_centroids = []
+            for c in centroids:
+                grp_centroid = []
+                for p in points:
+                    if p.get(label_key) == c.get(label_key):
+                        grp_centroid.append(p)
+                new = self.get_nd_series_mean(series=grp_centroid, keys=keys)
+                new[label_key] = c.get(label_key)
+                new_centroids.append(new)
+            print(new_centroids)
+
+            # Check for convergence or max iterations.
+            if centroids == new_centroids:
+                break
+            centroids = new_centroids
+
+        return points
 
 
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
-
-    """
-    km = KMeans()
-    km.x_k_means_2d(2, [(1,2),(3,3),(4,4),(4,1),(6,5)])
-
-    p = [{'x': 2, 'y': 2, 'c': None}, {'x': 6, 'y': 6, 'c': None}]
-    c = [{'x': 1, 'y': 1, 'c': 1}, {'x': 7, 'y': 7, 'c': 2}]
-    r = [{'x': 2, 'y': 2, 'c': 1}, {'x': 6, 'y': 6, 'c': 2}]
-    assert pair_closest_points(p, c, 'c') == r
-    """

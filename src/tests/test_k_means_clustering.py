@@ -6,7 +6,7 @@ import os
 from collections import namedtuple
 
 # Project import.
-from my_k_means.k_means_clustering import k_means_2d
+from my_k_means import k_means_clustering
 
 # Third party imports.
 
@@ -25,15 +25,5 @@ class TestKMMeans2D:
     def test_k_means_2d(self):
         """
         """
-        k = 2
-        Point = namedtuple('Point', 'x y cl')
-        test_case_points = [
-            Point(1, 2, None),
-            Point(1, 3, None),
-            Point(2, 2, None),
-            Point(5, 6, None),
-            Point(7, 4, None),
-            Point(6, 4, None),
-            Point(5, 6, None)
-        ]
+        pass
 
