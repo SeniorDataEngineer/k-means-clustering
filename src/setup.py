@@ -1,5 +1,11 @@
 from setuptools import setup, find_packages
 
+try:
+    from setuptools_conda import dist_conda
+    cmdclass = {'dist_conda': dist_conda}
+except ImportError:
+    cmdclass = {}
+
 # Add a line for each package
 
 setup(
@@ -24,7 +30,7 @@ setup(
 
         'Topic :: Software Development :: Libraries',
 
-        'Programming Language :: Python - Anaconda :: 3.9.1'
+        'Programming Language :: Python - Anaconda :: 3.8.5'
     ],
 
     packages=find_packages(),

@@ -4,8 +4,6 @@
 # Built-in imports.
 import random
 
-# Third party imports.
-import numpy
 
 class KMeans():
     """
@@ -18,21 +16,21 @@ class KMeans():
 
     def get_euclidean_distance(
             self,
-            p: list,
-            q: list) -> [float]:
+            p: tuple,
+            q: tuple) -> float:
         """
         Given 2 n-dimensional coordinates calculate distance
-        for each ith list using pythagorean theorem. Return
+        for each ith tuple using pythagorean theorem. Return
         the distance as a float. \n
         Returns:
-            [float]
+            list
         Doctest:
             >>> km = KMeans()
-            >>> assert round(km.get_euclidean_distance(p=[1,1], q=[3,3]), 2) == 2.83
+            >>> assert round(km.get_euclidean_distance(p=(1,1), q=(3,3)), 2) == 2.83
         """
         if not len(p) == len(q):
             raise ValueError('Both p and q must have same dimensionality.')
-            
+
         return sum([
             (p[dim] - q[dim]) ** 2
             for dim in range(len(p))
@@ -40,38 +38,39 @@ class KMeans():
 
     def pair_closest_points(
             self,
-            points: [float],
-            centers: [[float]]) -> [int]:
+            points: [dict],
+            centers: [dict],
+            center_label: str) -> [dict]:
         """
-        Iterate through each point and compare to all centers,
-        if the center is nearer than all previous centers store
-        the center number. \n
+        Given a series of points update the label to the
+        center point that is closest to the point. Iterate
+        through each point and compare to all centers, if
+        the center is nearer than all previous centers store
+        the center number in the point dict. \n
         Returns:
-            [int]
+            [dict]
         Doctest:
             >>> km = KMeans()
-            >>> p = [[2, 2], [6, 6]]
-            >>> c = [[1, 1], [7, 7]]
-            >>> e = [0, 1]
-            >>> assert km.pair_closest_points(p, c) == e
+            >>> p = [{'x': 2, 'y': 2, 'c': None}, {'x': 6, 'y': 6, 'c': None}]
+            >>> c = [{'x': 1, 'y': 1, 'c': 1}, {'x': 7, 'y': 7, 'c': 2}]
+            >>> e = [{'x': 2, 'y': 2, 'c': 1}, {'x': 6, 'y': 6, 'c': 2}]
+            >>> assert km.pair_closest_points(p, c, 'c') == e
         """
         pos_inf = float('inf')
-        centers_by_position = []
-        for i, p in enumerate(points):
-            shortest = pos_inf
-            centers_by_position.append(0)
-            for j, c in enumerate(centers):
-                distance = self.get_euclidean_distance(p, c)
-                if distance < shortest:
-                    shortest = distance
-                    centers_by_position[i] = j
-        return numpy.array(centers_by_position)
+        for point in points:
+            shortest_distance = pos_inf
+            for center in centers:
+                p, q = (point['x'], point['y']), (center['x'], center['y'])
+                distance = self.get_euclidean_distance(p, q)
+                if distance < shortest_distance:
+                    shortest_distance = distance
+                    point[center_label] = center[center_label]
+        return points
 
     def get_items_randomly(
             self,
             len_: int,
-            k_items: int,
-            retry_limit: int=5) -> [int]:
+            k_items: int) -> [int]:
         """
         For an input of len_ length pick random element
         positions and return those positions. The method
@@ -82,7 +81,6 @@ class KMeans():
         Doctest:
             >>> km = KMeans()
             >>> assert len(km.get_items_randomly(len_=300, k_items=3)) == 3
-            >>> assert len(km.get_items_randomly(len_=3, k_items=3)) == 3
         """
         if len_ < k_items:
             return ValueError('Range cannot be smaller than required'
@@ -90,7 +88,7 @@ class KMeans():
         if len_ == k_items:
             return [
                 v
-                for v in range(0, len_)]
+                for v in range(0, len(len_))]
 
         random_positions = []
         for _ in range(0, k_items):
@@ -99,71 +97,82 @@ class KMeans():
             while rnd in random_positions:
                 rnd = random.randint(0, len_)
                 i += 1
-                if i == retry_limit:
+                if i == 3:
                     break
             random_positions.append(rnd)
-
         return random_positions
 
     def get_nd_series_mean(
             self,
-            points: [[float]]) -> [float]:
+            series: [dict],
+            keys: [str]) -> dict:
         """
-        Given a list of n-dimensional floats return the mean
-        for each dimension. \n
+        Given a n-dimensional series of dicts return
+        the mean for each dimension. \n
         Returns:
-            [float]
+            dict
         Doctest:
             >>> km = KMeans()
-            >>> s = [[2, 3], [5, 6], [9, 10]]
-            >>> e = [5.333333333333333, 6.333333333333333]
-            >>> assert km.get_nd_series_mean(s) == e
+            >>> s = [{'x':2, 'y':3}, {'x':5, 'y':6}, {'x':9, 'y':10}]
+            >>> e = {'x':5.333333333333333, 'y':6.333333333333333}
+            >>> assert km.get_nd_series_mean(series=s, keys=['x', 'y']) == e
         """
-        mean = []
-        for i in range(len(points[0])):
-            mean.append(0)
-            for p in points:
-                mean[i] += p[i]
-            mean[i] /= len(points)
+        mean = {}
+        for key in keys:
+            mean[key] = 0
+            for item in series:
+                mean[key] += item[key]
+            mean[key] /= len(series)
         return mean
 
     def k_means_2d(
             self,
             k: int,
-            points: [[float]],
+            points: [dict],
+            label_key: str,
+            keys: [str],
             random_seed: int=2,
-            max_iterations: int=100) -> ([[float]], [[float]]):
+            max_iterations: int=100) -> [dict]:
         """
         Given a series of points return k clusters of grouped
         points. This is a standard implementation of k means. \n
         Returns:
-            ([[float]], [[float]])
+            [dict]
         """
         # Pick k centroids randomly.
         centroids = [ 
             points[i] 
-            for i in self.get_items_randomly(len(points), k)]
+            for i in self.get_items_randomly(len(points),k)]
 
         iteration = 0
         while True:
             if iteration == max_iterations:
                 break
             iteration += 1
-            
+
             # Get the closest centroid for each point.
-            labels = self.pair_closest_points(points, centroids)
-            
+            points = self.pair_closest_points(
+                points=points,
+                centers=centroids,
+                center_label='c')
+
             # Replace centroid with cluster mean.
-            new_centroids = numpy.array([
-                                self.get_nd_series_mean(points[labels == i])
-                                for i in range(k)])
+            new_centroids = []
+            for c in centroids:
+                grp_centroid = []
+                for p in points:
+                    if p.get(label_key) == c.get(label_key):
+                        grp_centroid.append(p)
+                new = self.get_nd_series_mean(series=grp_centroid, keys=keys)
+                new[label_key] = c.get(label_key)
+                new_centroids.append(new)
 
             # Check for convergence or max iterations.
-            if numpy.all(centroids == new_centroids):
+            if centroids == new_centroids:
                 break
             centroids = new_centroids
 
-        return (centroids, labels)
+        return points
 
 
 if __name__ == "__main__":
