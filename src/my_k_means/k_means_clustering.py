@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.8.5
+#!/usr/bin/env python3.9
 # Copyright 2020, Rose Software Ltd, All rights reserved.
 
 # Built-in imports.
@@ -134,8 +134,9 @@ class KMeans():
             random_seed: int=2,
             max_iterations: int=100) -> ([[float]], [[float]]):
         """
-        Given a series of points return k clusters of grouped
-        points. This is a standard implementation of k means. \n
+        Given a series of points return labels for each point
+        and the center co-ordinates. This is a standard
+        implementation of k means. \n
         Returns:
             ([[float]], [[float]])
         """
