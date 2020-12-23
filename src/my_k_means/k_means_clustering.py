@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.9
+#!/usr/bin/env python3.8.5
 # Copyright 2020, Rose Software Ltd, All rights reserved.
 
 # Built-in imports.
@@ -165,6 +165,31 @@ class KMeans():
             centroids = new_centroids
 
         return (centroids, labels)
+
+    def get_silhouette_coefficient(
+            self,
+            vectors: [[float]],
+            labels: [int],
+            centroids: [[float]]) -> [float]:
+        """
+        Given a list of vectors, labels for those vectors
+        and the corresponding list of centroids, return the
+        silhouetter coeficients indicating whether the selected
+        k is a good fit. \n
+        Returns:
+            [float]
+        Doctest:
+            >>> assert 1 == 2
+        """
+        paired_centroids = []
+        for c in centroids:
+            pair = c.extend(pair_closest_points(c, centroids))
+            paired_centroids.append(pair)
+        print(paired_centroids)
+
+        for i, v in enumerate(vectors):
+            centroid = paired_centroids(labels[i])
+            nearset = paired_centroids(centroid[-1])
 
 
 if __name__ == "__main__":
