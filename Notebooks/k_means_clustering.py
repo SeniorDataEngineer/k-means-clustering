@@ -258,7 +258,7 @@ class KMeans():
             random_seed: int=2,
             max_iterations: int=100) -> (int, [[float]], [[float]]):
         """
-        Iterates over possible k from 1 to 10, measures the
+        Iterates over possible k from 2 to 10, measures the
         fit of k and returns the best k, centroids and labels. \n
         Returns:
             (int, [[float]], [[float]])
@@ -272,13 +272,17 @@ class KMeans():
             s, p = self.get_silhouette_coefficient(vectors, l, c)
             self.silhouette_scores.append((s[0], p))
 
+        # Pick k.
+        k = self.get_best_fit_index()
+
         return (
-                self.get_best_fit_index(),
+                k + 2,
                 self.cluster_centroids_labels[k][0],
                 self.cluster_centroids_labels[k][1])
 
     def get_best_fit_index(
-            self) -> int:
+            self,
+            skip_negatives: bool=False) -> int:
         """
         Finds and returns the index of the best fitting k. Best
         fit is defined as the silhouette that has no negative
@@ -291,17 +295,17 @@ class KMeans():
             >>> km.silhouette_scores([[0.7, 0.6, 0.5], [-1, 1, 0.2]])
             >>> assert km.get_best_fit_index(s) == 0
         """
-        best_fit = float('inf')
+        best_fit = float('-inf')
         for i, s in enumerate(self.silhouette_scores):
             mean_silhouette = 0
             for c in s[0]:
-                if c < 0:
+                if skip_negatives and c < 0:
                     break
                 mean_silhouette += c
             mean_silhouette /= len(s)
-            if mean_silhouette < best_fit:
+            if mean_silhouette > best_fit:
                 best_fit = i
-        return best_fit        
+        return best_fit
 
 
 if __name__ == "__main__":
