@@ -1,17 +1,10 @@
 from setuptools import setup, find_packages
 
-try:
-    from setuptools_conda import dist_conda
-    cmdclass = {'dist_conda': dist_conda}
-except ImportError:
-    cmdclass = {}
-
-# Add a line for each package
 
 setup(
     name="my_k_means",
 
-    version='0.1.2.4',
+    version='0.1.4',
 
     license='None',
 
@@ -20,8 +13,8 @@ setup(
     author_email='JamesERose8@gmail.com',
 
     description=(
-        'A program that can cluster 2 dimensional vectors'
-        'using k means strategy to group likewise data.'),
+        'A program that can cluster vectors using k means'
+        ' strategy to group likewise data.'),
 
     classifiers=[
         'Development status :: 0 - Pre-alpha',
@@ -41,4 +34,4 @@ setup(
 
     setup_requires=[],
 
-    test_suite='src.tests')
+    test_suite='')
