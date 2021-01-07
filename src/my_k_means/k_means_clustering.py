@@ -216,6 +216,22 @@ class KMeans():
                     (arr_1, arr_2),
                     axis=0)
 
+    def get_arithmetic_mean(
+            self,
+            series: [float],
+            import_: str = None) -> float:
+        """
+        Given a series of int return the mean/average for that series.
+        If import_ is supplied a library is used for the calculation. \n
+        Returns:
+            float
+        DocTest:
+            >>> km = KMeans()
+            >>> assert km.get_arithmetic_mean([1,2,3]) == 2.0
+        """
+        return float(
+                     sum(series) / len(series))
+
     def get_silhouette_coefficient(
             self,
             vectors: [[float]],
@@ -238,8 +254,10 @@ class KMeans():
             >>> assert s == 0.86
             >>> assert r[1] == [1, 0]
         """
-        # Pair the centroids to their closest partner.
         pairs = []
+        silhouettes = [ [] for _ in range(0, len(centroids)) ]
+
+        # Pair the centroids to their closest partner.
         for i, c in enumerate(centroids):
             others = self.ndarray_without_ith(centroids, i)
             p = self.pair_closest_vectors([c], others,
@@ -250,25 +268,25 @@ class KMeans():
             else:
                 pairs.extend(p+1)
 
-        # Calculate the silhouette_coefficient for each vector.
-        silhouettes = []
-        for j in range(0, len(centroids)):
-            silhouettes.append([])
-            for v in vectors[labels == j]:
-                # a: get intra-cluster mean distance.
-                a = self.get_nd_series_mean([
-                        [self.get_euclidean_distance(x, v)]
-                        for x in vectors[labels == j]
-                        if not numpy.all(x == v)])[0]
+        f = self.get_euclidean_distance
+        g = self.get_arithmetic_mean
 
-                # b: get the inter-cluster distance.
-                b = self.get_nd_series_mean([
-                    [self.get_euclidean_distance(x, v)]
-                    for x in vectors[labels == pairs[j]]])[0]
+        for i, v in enumerate(vectors):
+            j = labels[i]
+            # a: intra-cluster mean distance.
+            a = g([
+                    f(x, v)
+                    for x in vectors[labels == j]
+                    if not numpy.all(x == v)])
 
-                # Calculate silhouette.
-                silhouettes[j].append(
-                                      (b - a) / max(a, b))
+            # b: inter-cluster distance.
+            b = g([
+                    f(y, v)
+                    for y in vectors[labels == pairs[j]]])
+            
+            # Calculate silhouette.
+            silhouettes[j].append(
+                                    (b - a) / max(a, b))
 
         return (silhouettes, pairs)
 
@@ -331,3 +349,14 @@ class KMeans():
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
+    """
+    km = KMeans()
+    v = numpy.array([[1,1], [2,2], [8,8], [9,9]])
+    l = numpy.array([0,0,1,1])
+    c = numpy.array([[1.5,1.5], [8.5,8.5]])
+    r = km.get_silhouette_coefficient(v, l, c)[0]
+    x = [item for sublist in r for item in sublist]
+    print(r)
+    print(x)
+    print(sum(x)/4)
+    """

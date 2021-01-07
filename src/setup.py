@@ -1,10 +1,11 @@
 from setuptools import setup, find_packages
 
+# find the directory and work backwards 1 level to find readme
 
 setup(
     name="my_k_means",
 
-    version='0.1.5',
+    version='0.2.3',
 
     license='None',
 
@@ -28,7 +29,7 @@ setup(
 
     packages=find_packages(),
 
-    long_description=open('../README.md').read(),
+    long_description=open('C:\\Users\\METIC\\source\\repos\\KMeansClusteringPython\\README.md').read(),
 
     zip_safe=False,
 
