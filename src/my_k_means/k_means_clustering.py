@@ -224,7 +224,7 @@ class KMeans():
         """
         Given a list of vectors, labels for those vectors
         and the corresponding list of centroids, return the
-        silhouette coeficients indicating whether the selected
+        silhouette coefficients indicating whether the selected
         k is a good fit. \n
         Returns:
             [float]
@@ -264,8 +264,7 @@ class KMeans():
                 # b: get the inter-cluster distance.
                 b = self.get_nd_series_mean([
                     [self.get_euclidean_distance(x, v)]
-                    for x in vectors[labels == pairs[j]]
-                    if not numpy.all(x == v)])[0]
+                    for x in vectors[labels == pairs[j]]])[0]
 
                 # Calculate silhouette.
                 silhouettes[j].append(
