@@ -1,4 +1,4 @@
-# <a name="top-page"></a>DataFileExtractor
+# <a name="top-page"></a>KMeansClusteringPython
 > Is an implementation of k-means clustering written
 from pseudo-code. The project includes a Jupyter
 Notebook illustrating usage of the package.
@@ -36,7 +36,7 @@ Notebook illustrating usage of the package.
 |_ src  
   |_ my_k_means
     |_ __init__.py 
-    |_ k_means_clustering  
+    |_ k_means_clustering.py
   |_setup.py
 |_ README.md
 |_ requirements.txt
