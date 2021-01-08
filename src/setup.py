@@ -1,11 +1,18 @@
+#!/usr/bin/env python3.8.5
+# Copyright 2020, Rose Software Ltd, All rights reserved.
+
+# Built-in imports.
 from setuptools import setup, find_packages
+import os
 
 # find the directory and work backwards 1 level to find readme
+LOCAL_USER = os.getlogin()
+README_PATH = f'C:\\Users\\{LOCAL_USER}\\source\\repos\\KMeansClusteringPython\\README.md'
 
 setup(
     name="my_k_means",
 
-    version='0.2.8',
+    version='0.2.9',
 
     license='None',
 
@@ -29,7 +36,7 @@ setup(
 
     packages=find_packages(),
 
-    long_description=open('C:\\Users\\METIC\\source\\repos\\KMeansClusteringPython\\README.md').read(),
+    long_description=open(README_PATH).read(),
 
     zip_safe=False,
 
