@@ -166,7 +166,7 @@ class KMeans():
         # Pick k centroids randomly.
         centroids = [
             vectors[i]
-            for i in self.get_items_randomly(len(vectors), k)]
+            for i in self.get_items_randomly(len(vectors)-1, k)]
 
         iteration = 0
         while True:
@@ -218,8 +218,7 @@ class KMeans():
 
     def get_arithmetic_mean(
             self,
-            series: [float],
-            import_: str = None) -> float:
+            series: [float]) -> float:
         """
         Given a series of int return the mean/average for that series.
         If import_ is supplied a library is used for the calculation. \n
@@ -254,22 +253,19 @@ class KMeans():
             >>> assert s == 0.86
             >>> assert r[1] == [1, 0]
         """
+        f = self.get_euclidean_distance
+        g = self.get_arithmetic_mean
         pairs = []
         silhouettes = [ [] for _ in range(0, len(centroids)) ]
 
-        # Pair the centroids to their closest partner.
+        # Pair each centroid to closest other centroid.
         for i, c in enumerate(centroids):
             others = self.ndarray_without_ith(centroids, i)
-            p = self.pair_closest_vectors([c], others,
-                                          self.get_euclidean_distance)
+            p = self.pair_closest_vectors([c], others, f)
             # Others is missing ith item.
-            if p < i:
-                pairs.extend(p)
-            else:
-                pairs.extend(p+1)
-
-        f = self.get_euclidean_distance
-        g = self.get_arithmetic_mean
+            if not p < i:
+                p += 1
+            pairs.extend(p)
 
         for i, v in enumerate(vectors):
             j = labels[i]
@@ -290,6 +286,22 @@ class KMeans():
 
         return (silhouettes, pairs)
 
+    def get_silhouette_summary(
+            self,
+            i: int) -> float:
+        """
+
+        Returns:
+            
+        Doctest:
+        """
+        f = self.get_arithmetic_mean
+        s = f([ 
+                x 
+                for y in self.silhouette_scores[i][0] 
+                for x in y ])
+        return s
+
     def get_best_fit(
             self,
             vectors: [[float]],
@@ -308,7 +320,7 @@ class KMeans():
 
             # Test quality of cluster fit.
             s, p = self.get_silhouette_coefficient(vectors, l, c)
-            self.silhouette_scores.append((s[0], p))
+            self.silhouette_scores.append((s, p))
 
         # Pick k.
         k = self.get_best_fit_index()
@@ -330,33 +342,22 @@ class KMeans():
             int
         Doctest:
             >>> km = KMeans()
-            >>> km.silhouette_scores = [[[0.7, 0.6, 0.5], [-1, 1, 0.2]]]
+            >>> x = [([[0.7, 0.6], [0.7, 0.6]], [1, 1, 0]), ([[0.7, 0.6, 0.1], [0.7, 0.6]], [1, 2, 0])]
+            >>> km.silhouette_scores = x
             >>> assert km.get_best_fit_index() == 0
         """
-        best_fit = float('-inf')
+        f = self.get_arithmetic_mean
+        h_mean = float('-inf')
+        index = 0
         for i, s in enumerate(self.silhouette_scores):
-            mean_silhouette = 0
-            for c in s[0]:
-                if skip_negatives and c < 0:
-                    break
-                mean_silhouette += c
-            mean_silhouette /= len(s[0])
-            if mean_silhouette > best_fit:
-                best_fit = i
-        return best_fit
+            mean = 0
+            mean = f([ x for y in s[0] for x in y ])
+            if mean > h_mean:
+                h_mean = mean
+                index = i
+        return index
 
 
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
-    """
-    km = KMeans()
-    v = numpy.array([[1,1], [2,2], [8,8], [9,9]])
-    l = numpy.array([0,0,1,1])
-    c = numpy.array([[1.5,1.5], [8.5,8.5]])
-    r = km.get_silhouette_coefficient(v, l, c)[0]
-    x = [item for sublist in r for item in sublist]
-    print(r)
-    print(x)
-    print(sum(x)/4)
-    """

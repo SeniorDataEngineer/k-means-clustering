@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 setup(
     name="my_k_means",
 
-    version='0.2.3',
+    version='0.2.8',
 
     license='None',
 
