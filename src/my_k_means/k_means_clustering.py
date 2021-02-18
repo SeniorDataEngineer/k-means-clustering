@@ -10,18 +10,18 @@ import numpy
 
 class KMeans():
     """
-    This class can be used to instantiate a mini-toolkit
-    for running k means clustering analysis of data sets.
+    This class can be used to instantiate a mini-toolkit for running k means
+    clustering analysis of data sets.
     """
 
     def __init__(
             self,
-            start_k: int=1,
-            seek_ideal_k: bool=False,
-            k_fitting_method: str='silh'):
+            start_k: int = 1,
+            seek_ideal_k: bool = False,
+            k_fitting_method: str = 'silh'):
         """
-        Initializes a KMeans clustering object. Call
-        get_clusters to trigger algorithm. \n
+        Initializes a KMeans clustering object. Call get_clusters to trigger
+        algorithm. \n
         Keyword arguments:
             start_k          -- a starting value for k
             seek_ideal_k     -- whether to search for ideal k
@@ -39,16 +39,13 @@ class KMeans():
             p: list,
             q: list) -> [float]:
         """
-        Given 2 n-dimensional coordinates calculate distance
-        for each ith list using pythagorean theorem. Return
-        the distance as a float. \n
+        Given 2 n-dimensional coordinates calculate distance for each ith list
+        using pythagorean theorem. Return the distance as a float. \n
         Returns:
             [float]
         Doctest:
             >>> km = KMeans()
-            >>> p = [1,1]
-            >>> q = [3,3]
-            >>> e = 2.83
+            >>> p, q, e = [1,1], [3,3], 2.83
             >>> assert round(km.get_euclidean_distance(p, q), 2) == e
         """
         if not len(p) == len(q):
@@ -80,26 +77,28 @@ class KMeans():
         """
         pos_inf = float('inf')
         closest_vb = []
+
         for i, va in enumerate(vectors_a):
             shortest = pos_inf
             closest_vb.append(0)
+
             for j, vb in enumerate(vectors_b):
                 distance = dist_measure(va, vb)
                 if distance < shortest:
                     shortest = distance
                     closest_vb[i] = j
+
         return numpy.array(closest_vb)
 
     def get_items_randomly(
             self,
             len_: int,
             k_items: int,
-            retry_limit: int=5) -> [int]:
+            retry_limit: int = 5) -> [int]:
         """
-        For an input of len_ length pick random element
-        positions and return those positions. The method
-        will retry a call to random 3 tries before giving
-        up and returning a duplicate.
+        For an input of len_ length pick random element positions and return
+        those positions. The method will retry a call to random 5 tries before
+        giving up and returning a duplicate. \n
         Returs:
             [int]
         Doctest:
@@ -132,8 +131,8 @@ class KMeans():
             self,
             vectors: [[float]]) -> [float]:
         """
-        Given a list of n-dimensional floats return the mean
-        for each dimension. \n
+        Given a list of n-dimensional floats return the mean for each
+        dimension. \n
         Returns:
             [float]
         Doctest:
@@ -154,10 +153,10 @@ class KMeans():
             self,
             k: int,
             vectors: [[float]],
-            max_iterations: int=100) -> ([[float]], [[float]]):
+            max_iterations: int = 100) -> ([[float]], [[float]]):
         """
-        Given a series of vectors return a list of labels and a
-        list of center vectors. \n
+        Given a series of vectors return a list of labels and a list of center
+        vectors. \n
         Returns:
             ([[float]], [[float]])
         Usage:
@@ -195,8 +194,8 @@ class KMeans():
             array: numpy.ndarray,
             i: int) -> numpy.ndarray:
         """
-        Splits a numpy.ndarray at index i excluding ith element of the
-        array. \n
+        Splits a numpy.ndarray at index i excluding ith element of the array.
+        \n
         Returns:
             numpy.ndarray
         Doctest:
@@ -237,10 +236,9 @@ class KMeans():
             labels: [int],
             centroids: [[float]]) -> ([float], [float]):
         """
-        Given a list of vectors, labels for those vectors
-        and the corresponding list of centroids, return the
-        silhouette coefficients indicating whether the selected
-        k is a good fit. \n
+        Given a list of vectors, labels for those vectors and the
+        corresponding list of centroids, return the silhouette
+        coefficients indicating whether the selected k is a good fit. \n
         Returns:
             [float]
         Doctest:
@@ -256,7 +254,7 @@ class KMeans():
         f = self.get_euclidean_distance
         g = self.get_arithmetic_mean
         pairs = []
-        silhouettes = [ [] for _ in range(0, len(centroids)) ]
+        silhouettes = [[] for _ in range(0, len(centroids))]
 
         # Pair each centroid to closest other centroid.
         for i, c in enumerate(centroids):
@@ -279,7 +277,7 @@ class KMeans():
             b = g([
                     f(y, v)
                     for y in vectors[labels == pairs[j]]])
-            
+
             # Calculate silhouette.
             silhouettes[j].append(
                                     (b - a) / max(a, b))
@@ -290,36 +288,35 @@ class KMeans():
             self,
             i: int) -> float:
         """
-
+        TODO : Comment, seek usage.
         Returns:
-            
         Doctest:
         """
         f = self.get_arithmetic_mean
-        s = f([ 
-                x 
-                for y in self.silhouette_scores[i][0] 
-                for x in y ])
+        s = f([
+                x
+                for y in self.silhouette_scores[i][0]
+                for x in y])
         return s
 
     def get_best_fit(
             self,
             vectors: [[float]],
-            start_k: int=2,
-            max_iterations: int=100) -> (int, [[float]], [[float]]):
+            start_k: int = 2,
+            max_iterations: int = 100) -> (int, [[float]], [[float]]):
         """
-        Iterates over possible k from 2 to 10, measures the
-        fit of k and returns the best k, centroids and labels. \n
+        Iterates over possible k from 2 to 10, measures the fit of k and
+        returns the best k, centroids and labels. \n
         Returns:
             (int, [[float]], [[float]])
         """
         for k in range(start_k, 11):
             # Cluster.
-            c, l = self.get_clusters(k, vectors, max_iterations)
-            self.cluster_centroids_labels.append((c, l))
+            cnt, lbl = self.get_clusters(k, vectors, max_iterations)
+            self.cluster_centroids_labels.append((cnt, lbl))
 
             # Test quality of cluster fit.
-            s, p = self.get_silhouette_coefficient(vectors, l, c)
+            s, p = self.get_silhouette_coefficient(vectors, lbl, cnt)
             self.silhouette_scores.append((s, p))
 
         # Pick k.
@@ -332,29 +329,33 @@ class KMeans():
 
     def get_best_fit_index(
             self,
-            skip_negatives: bool=False) -> int:
+            skip_negatives: bool = False) -> int:
         """
-        Finds and returns the index of the best fitting k. Best
-        fit is defined as the silhouette that has no negative
-        coefficients and has the highest average silhouette
+        Finds and returns the index of the best fitting k. Best fit is defined
+        as the silhouette that has no negative coefficients and has the
+        highest average silhouette
         per cluster. \n
         Returns:
             int
         Doctest:
             >>> km = KMeans()
-            >>> x = [([[0.7, 0.6], [0.7, 0.6]], [1, 1, 0]), ([[0.7, 0.6, 0.1], [0.7, 0.6]], [1, 2, 0])]
+            >>> a = ([[0.7, 0.6], [0.7, 0.6]], [1, 1, 0])
+            >>> b = ([[0.7, 0.6, 0.1], [0.7, 0.6]], [1, 2, 0])
+            >>> x = [a, b]
             >>> km.silhouette_scores = x
             >>> assert km.get_best_fit_index() == 0
         """
         f = self.get_arithmetic_mean
         h_mean = float('-inf')
         index = 0
+
         for i, s in enumerate(self.silhouette_scores):
             mean = 0
-            mean = f([ x for y in s[0] for x in y ])
+            mean = f([x for y in s[0] for x in y])
             if mean > h_mean:
                 h_mean = mean
                 index = i
+
         return index
 
 
