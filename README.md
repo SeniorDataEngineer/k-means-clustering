@@ -28,7 +28,6 @@ Notebook illustrating usage of the package.
     * Return silhouette scores for k selection.
     * Automatically find best fitting k.
 
-
 # <a name="structure"></a>Project Structure
 ```
 |_ .vscode
