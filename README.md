@@ -31,6 +31,8 @@ Notebook illustrating usage of the package.
 
 # <a name="structure"></a>Project Structure
 ```
+|_ .vscode
+  |_ ... 
 |_ Notebooks
   |_ k_means_clustering_demo.ipynb 
 |_ src  
