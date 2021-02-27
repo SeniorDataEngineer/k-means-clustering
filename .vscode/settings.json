@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "H:\\Anaconda\\envs\\venv-k-means-clustering\\python.exe"
+    "python.pythonPath": "H:\\Anaconda\\envs\\venv-k-means-clustering\\python.exe",
+    "python.pipenvPath": "H:\\Anaconda\\envs\\venv-k-means-clustering\\Scripts\\pip.exe",
 }
