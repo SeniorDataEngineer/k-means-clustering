@@ -39,6 +39,7 @@
     |_ __init__.py 
     |_ k_means_clustering.py
   |_setup.py
+|_ .gitignore
 |_ README.md
 |_ requirements.txt
 ```
