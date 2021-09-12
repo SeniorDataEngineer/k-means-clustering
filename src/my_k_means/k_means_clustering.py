@@ -3,6 +3,7 @@
 
 # Built-in imports.
 import random
+from decimal import Decimal
 
 # Third party imports.
 import numpy
@@ -18,7 +19,8 @@ class KMeans():
             self,
             start_k: int = 1,
             seek_ideal_k: bool = False,
-            k_fitting_method: str = 'silh'):
+            k_fitting_method: str = 'silh',
+            ):
         """
         Initializes a KMeans clustering object. Call get_clusters to trigger
         algorithm. \n
