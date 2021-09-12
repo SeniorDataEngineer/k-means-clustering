@@ -3,7 +3,7 @@
 
 # Built-in imports.
 import random
-from decimal import Decimal
+from decimal import *
 
 # Third party imports.
 import numpy
@@ -20,7 +20,7 @@ class KMeans():
             start_k: int = 1,
             seek_ideal_k: bool = False,
             k_fitting_method: str = 'silh',
-            ):
+            decimal_precision: int = 3):
         """
         Initializes a KMeans clustering object. Call get_clusters to trigger
         algorithm. \n
@@ -35,6 +35,7 @@ class KMeans():
         self.k_test_method = k_fitting_method
         self.cluster_centroids_labels = []
         self.silhouette_scores = []
+        getcontext().prec = decimal_precision
 
     def get_euclidean_distance(
             self,
