@@ -2,6 +2,10 @@
 > Is an implementation of k-means clustering written from pseudo-code. The project includes a Jupyter
 > Notebook illustrating usage of the package.
 
+# Video demonstration
+Download the file to view.
+https://github.com/SeniorDataEngineer/k-means-clustering/blob/master/jer-kmeans-clustering.mp4
+
 # Table of Contents
 * [License](#license)
 * [Team Members](#team-members)
